@@ -4,10 +4,10 @@ const app = express();
 
 app.get('/', (req, res)=>{
 
-    const {name, email} = req.query;
+    const {name} = req.query;
 
     let data = {
-        message: `Fala ${name}! do email ${email}`,
+        message: `Fala ${name}!`,
     };
 
     res.json(data);
