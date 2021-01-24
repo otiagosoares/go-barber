@@ -1,14 +1,20 @@
 const express = require('express');
+const cors = require('cors');
 const { uuid,isUuid }= require('uuidv4');
 const app = express();
 
 app.use(express.json());
+app.search(cors());
 app.use(logRequests);
 
 app.use('/projects/:id', validateProjectId);
 
 const projects = [
-    
+    {
+        id: '1d8091e8-af55-4b44-8fd0-d8fa9aa1da5a',
+        title: 'Go barber com React e node',
+        owner: 'Tiago',
+    }
 ];
 
 /*
