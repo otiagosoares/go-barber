@@ -1,14 +1,21 @@
 import { Router } from 'express';
-import { startOfHour, parseISO, isEqual } from 'date-fns';
-import Appointment from '../models/Appointment';
+import { startOfHour, parseISO } from 'date-fns';
+
+import AppointmentsRepository from '../repositories/AppointmentsRepository';
+/* 
+    persistencia <---> Repositorio <---> Rota
+
+    repositorio:
+        responsavel por persistir dados
+        um repositorio por model (normalmente);
+*/
 
 const appointmentsRouter = Router();
-
-const appointments:Appointment[] = [];
+const appointmentsRepository = new AppointmentsRepository();
 
 appointmentsRouter.get('/', (request, response) => {
 
-    return response.json(appointments);
+    return response.json({});
 });
 
 appointmentsRouter.post('/', (request, response) => {
@@ -17,9 +24,7 @@ appointmentsRouter.post('/', (request, response) => {
 
     const parserdDate = startOfHour(parseISO(date));
 
-    const findAppintmentInSameDate = appointments.find( appointment => 
-        isEqual(parserdDate, appointment.date)
-    );
+    const findAppintmentInSameDate = appointmentsRepository.findByDate(parserdDate);
 
     if(findAppintmentInSameDate){
         return response.status(400).json({
@@ -27,9 +32,7 @@ appointmentsRouter.post('/', (request, response) => {
         });
     }
     
-    const appointment = new Appointment(provider, parserdDate);
-    
-    appointments.push(appointment);
+    const appointment = appointmentsRepository.create(provider, parserdDate);
 
     return response.json(appointment);
 });
