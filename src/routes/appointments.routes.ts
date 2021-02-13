@@ -8,6 +8,9 @@ import AppointmentsRepository from '../repositories/AppointmentsRepository';
     repositorio:
         responsavel por persistir dados
         um repositorio por model (normalmente);
+
+    SoC: Separation of Concerns (separacao de preocupacoes)
+        Cada parte do codigo tem que ter apenas uma preocupacao
 */
 
 const appointmentsRouter = Router();
@@ -15,7 +18,9 @@ const appointmentsRepository = new AppointmentsRepository();
 
 appointmentsRouter.get('/', (request, response) => {
 
-    return response.json({});
+    const appointments = appointmentsRepository.all();
+
+    return response.json(appointments);
 });
 
 appointmentsRouter.post('/', (request, response) => {
