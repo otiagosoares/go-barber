@@ -11,6 +11,8 @@ import AppointmentsRepository from '../repositories/AppointmentsRepository';
 
     SoC: Separation of Concerns (separacao de preocupacoes)
         Cada parte do codigo tem que ter apenas uma preocupacao
+
+    DTO - data transfer object
 */
 
 const appointmentsRouter = Router();
@@ -27,9 +29,9 @@ appointmentsRouter.post('/', (request, response) => {
 
     const {provider, date} = request.body;
 
-    const parserdDate = startOfHour(parseISO(date));
+    const parsedDate = startOfHour(parseISO(date));
 
-    const findAppintmentInSameDate = appointmentsRepository.findByDate(parserdDate);
+    const findAppintmentInSameDate = appointmentsRepository.findByDate(parsedDate);
 
     if(findAppintmentInSameDate){
         return response.status(400).json({
@@ -37,7 +39,10 @@ appointmentsRouter.post('/', (request, response) => {
         });
     }
     
-    const appointment = appointmentsRepository.create(provider, parserdDate);
+    const appointment = appointmentsRepository.create({
+        provider,
+        date: parsedDate,
+    });
 
     return response.json(appointment);
 });
