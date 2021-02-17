@@ -1,6 +1,7 @@
-import {startOfHour} from 'date-fns';
+import { startOfHour } from 'date-fns';
 import Appointment from '../models/Appointment';
-import AppointmentsRepository from '../repositories/AppointmentsRepository'
+import AppointmentsRepository from '../repositories/AppointmentsRepository';
+import { getCustomRepository } from 'typeorm'
 
 /**
  *  Service 
@@ -25,37 +26,39 @@ import AppointmentsRepository from '../repositories/AppointmentsRepository'
     https://www.notion.so/Repository-service-e-patterns-82419cceb11c4c4fbbc055ade7fb1ac5
  */
 
-interface RequestDTO{
+interface RequestDTO {
     provider: string;
     date: Date;
 }
 
-class CreateAppointmentService{
+class CreateAppointmentService {
 
-    private appointmentsRepository: AppointmentsRepository;
+    public async execute({ date, provider }: RequestDTO): Promise<Appointment> {
 
-    constructor(appointmentsRepository: AppointmentsRepository ){
-        this.appointmentsRepository = appointmentsRepository;
-    }
+        const appointmentsRepository = getCustomRepository(AppointmentsRepository);
 
-    public execute({date, provider}: RequestDTO): Appointment{
-        
         //essa é uma rerga de negocio. a hora em que o agendamento vai acontecer
         const appointmentDate = startOfHour(date);
 
-        const findAppintmentInSameDate = this.appointmentsRepository.findByDate(date);
+        const findAppintmentInSameDate = await appointmentsRepository.findByDate(
+            appointmentDate
+        );
 
-        if(findAppintmentInSameDate){
+        if (findAppintmentInSameDate) {
             throw Error('This appointment is already booked');
         }
-        
-        const appointment = this.appointmentsRepository.create({
-                date: appointmentDate,
-                provider,
-            });
-        
+
+        // cria instancia do appointment na memoria
+        const appointment = appointmentsRepository.create({
+            date: appointmentDate,
+            provider,
+        });
+
+        // salva efetivamente no banco de dados
+        await appointmentsRepository.save(appointment);
+
         return appointment;
-    
+
     }
 }
 
