@@ -2,6 +2,7 @@ import express from 'express';
 import routes from './routes';
 import parser from 'body-parser';
 import cors from 'cors';
+import './database';
 
 const app = express();
 
