@@ -7,10 +7,22 @@ import AppointmentsRepository from '../repositories/AppointmentsRepository'
  *  - nao tem acesso direto aos dados da requisicao/resposta
  *  - deve ter apenas uma responsabilidade (ex: criar) 
  *   
- *   Exemplo de DI = Dependence Inversion (soliD)
+ *  SOLID:
+ *  
+ *  Single Responsability Principle
+ *  O
+ *  L
+ *  I
+ *  Dependency Invertion
+ * 
+ *   Exemplo de DI = Dependency Invertion (soliD)
+ *   recebe o mesmo repositorio pro parametro no constructor:
+ * 
  *   constructor(appointmentsRepository: AppointmentsRepository ){
         this.appointmentsRepository = appointmentsRepository;
     }
+
+    https://www.notion.so/Repository-service-e-patterns-82419cceb11c4c4fbbc055ade7fb1ac5
  */
 
 interface RequestDTO{
