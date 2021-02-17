@@ -1,7 +1,8 @@
 import { Router } from 'express';
-import { startOfHour, parseISO } from 'date-fns';
+import { parseISO } from 'date-fns';
 
 import AppointmentsRepository from '../repositories/AppointmentsRepository';
+import CreateAppointmentService from '../services/CreateAppointmentService';
 /* 
     persistencia <---> Repositorio <---> Rota
 
@@ -27,24 +28,25 @@ appointmentsRouter.get('/', (request, response) => {
 
 appointmentsRouter.post('/', (request, response) => {
 
+   try{
+
     const {provider, date} = request.body;
 
-    const parsedDate = startOfHour(parseISO(date));
+    const parsedDate = parseISO(date) ;
+    const createAppointment = new CreateAppointmentService(appointmentsRepository);
 
-    const findAppintmentInSameDate = appointmentsRepository.findByDate(parsedDate);
-
-    if(findAppintmentInSameDate){
-        return response.status(400).json({
-            message: 'This appointment is already booked',
-        });
-    }
-    
-    const appointment = appointmentsRepository.create({
-        provider,
+    const appointment = createAppointment.execute({
         date: parsedDate,
-    });
+        provider,
+    })
 
     return response.json(appointment);
+   }catch(err){
+       console.error('err', err.message);
+       return response.status(400).json({
+           error: err.message
+       });
+   }
 });
 
 export default appointmentsRouter;
